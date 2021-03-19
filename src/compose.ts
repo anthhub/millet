@@ -10,6 +10,10 @@ export function composeMiddleware<T extends Context>(middleware: Middleware<T>[]
     // 记录上一次执行中间件的位置 #
     let index = -1
 
+    function end() {
+      return dispatch(0, true)
+    }
+
     return dispatch(0)
 
     function dispatch(i: number, willEnd = false): Promise<any> {
@@ -36,9 +40,7 @@ export function composeMiddleware<T extends Context>(middleware: Middleware<T>[]
         return dispatch(i + 1)
       }
 
-      nextFunc.end = function() {
-        return dispatch(0, true)
-      }
+      nextFunc.end = end
 
       try {
         return Promise.resolve(fn(context, nextFunc))

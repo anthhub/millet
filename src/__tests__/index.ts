@@ -89,7 +89,6 @@ describe('millet', () => {
         ctx.data = await request(ctx)
       } catch (error) {
         // console.error(error)
-
         ctx.needRescue = true
       }
 
