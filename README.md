@@ -6,16 +6,16 @@
 [![Coverage Status](https://coveralls.io/repos/github/anthhub/millet/badge.svg?branch=master)](https://coveralls.io/github/anthhub/millet?branch=master)
 
 
-受 Koa 启发, 想把 Koa 中间件机制通用化, 使用在任何地方.
+受 `Koa` 启发, 想把 `Koa` 中间件机制通用化, 使用在任何地方.
 
-Millet 是一个更通用, 更灵活的中间件框架; 结合 http 请求可实现 Koa 功能; 结合其他业务实现更多可能.
+`Millet` 是一个更通用, 更灵活的中间件框架; 结合 http 请求可实现 `Koa` 功能; 结合其他业务实现更多可能.
 
 ## 特性
 
-- 支持 Koa 中间件 
+- 支持 `Koa` 中间件 
 - **支持中间件提前终止**
 - **支持任务重试**
-- 完美的 TypeScript 支持
+- 完美的 `TypeScript` 支持
 ## 安装
 
 ```bash
@@ -51,7 +51,7 @@ millet.use(async (ctx, next) => {
     await next();
 });
 
-millet.do( {req : { url:'http://liuma.top/api/data', method:'GET' }, res:{}})
+millet.do({req : { url:'http://liuma.top/api/data', method:'GET' }, res:{}})
 ```
 
 >  `millet.do()` 触发中间件执行, 可传入自定义的 `Context`
@@ -63,8 +63,10 @@ millet.use(async (ctx, next) => {
     const data = localStorage.getItem(ctx.req.url)
     if(data){
         ctx.res.data = data
+        // 下游中间件将不会执行
+        return next.end();
     }
-    await next.end();
+    await next();
 });
 
 millet.use(async (ctx, next) => {
@@ -82,12 +84,15 @@ millet.do( {req : { url:'http://liuma.top/api/data', method: 'GET' }, res:{} })
 
 在一些业务中, 有时遇到接口 token 过期时, 会直接导致接口失败, 而且有可能本次的多个接口都因为 token 过期而失败.
 
-此时在业务上同时是跳转登录页去获取新 token 后, 返回本页面; 或者是需要调用刷新 token 的接口后再刷新此页面. 折现方法都会导致页面不能正常工作而导致不好的用户体验.
+此时在业务上一般是跳转登录页去获取新 token, 然后返回本页面触发接口发送; 或者是需要调用刷新 token 的接口后再刷新此页面. 
 
-而 `Millet` 可以在发现接口过期后, 立即挂起后续请求, 使用开发者自定义的 `ctx.rescue()` 方法, 获取最新 token, 然后重试因为 token 而挂起的所有请求(包括 token 过期后导致失败的那次请求). 这种情况下, 业务代码可以发送接口, 正常获取数据, 对业务层是无感知的.
+这两种方法都会导致页面不能正常工作而导致不好的用户体验.
 
+而 `Millet` 可以在发现接口过期后, 立即挂起本次和后续请求, 此时调用接口的业务层都将会得到 `PENDING` 状态的 `Promise`
 
-需要通过接口刷新 token, 然后再次请求
+使用开发者自定义的 `ctx.rescue()` 方法, 获取最新 token, 之后重试因为 token 而挂起的所有请求(包括 token 过期后导致失败的那次请求). 请求成功后, 业务层会得到 `FULFILLED` 状态的 `Promise`
+
+使用 `Millet`, 业务代码无需改动, 可以正常获取数据, 而且对业务层是无感知的!
 
 ```ts
     // 需要导入提供的 rescuer 中间件 
@@ -113,7 +118,7 @@ millet.do( {req : { url:'http://liuma.top/api/data', method: 'GET' }, res:{} })
       }
     }
 
-    // rescuer 中间件 可以使用自定义的 rescue 方法, 异步获取 token, 之后再重试被挂起的请求
+    // rescuer 中间件 可以使用开发者自定义的 rescue 方法, 异步获取 token, 之后再重试被挂起的请求
     const millet = new Millet(rescuer, middleware1)
 
     // 这次请求因为 token 过期而失败, 然后被挂起. Millet 会自动使用 ctx.rescue() 方法获取新 token, 再重试本次请求
