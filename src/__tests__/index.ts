@@ -1,9 +1,9 @@
-import Scallion from '..'
+import Millet from '..'
 import { rescuer } from '../middlewares/rescuer'
 
 import { Context, Next } from '../type'
 
-describe('scallion', () => {
+describe('millet', () => {
   test(`use middleware`, async () => {
     const predicted = [1, 3, 5, 6, 4, 2]
     const received: number[] = []
@@ -26,11 +26,11 @@ describe('scallion', () => {
       received.push(6)
     }
 
-    const scallion = new Scallion(middleware1, middleware2)
+    const millet = new Millet(middleware1, middleware2)
 
-    scallion.use(middleware3)
+    millet.use(middleware3)
 
-    await scallion.do()
+    await millet.do()
 
     expect(received).toStrictEqual(predicted)
   })
@@ -51,9 +51,9 @@ describe('scallion', () => {
       received.push(4)
     }
 
-    const scallion = new Scallion(middleware1, middleware2)
+    const millet = new Millet(middleware1, middleware2)
 
-    await scallion.do()
+    await millet.do()
 
     expect(received).toStrictEqual(predicted)
   })
@@ -95,7 +95,7 @@ describe('scallion', () => {
 
       await next()
     }
-    const scallion = new Scallion(rescuer, middleware1, middleware2)
+    const millet = new Millet(rescuer, middleware1, middleware2)
 
     const ctx = {
       rescue: async (ctx: Context) => {
@@ -108,7 +108,7 @@ describe('scallion', () => {
     await Promise.all(
       new Array(10).fill(1).map((_, index) => {
         const url = 'http://liuma.top/api/data/' + index
-        return scallion.do({ ...ctx, url }).then(ctx => {
+        return millet.do({ ...ctx, url }).then(ctx => {
           // console.log(ctx.data.url, ctx.url, url)
 
           expect(ctx.url).toStrictEqual(url)

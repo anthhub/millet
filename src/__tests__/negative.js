@@ -1,7 +1,7 @@
-import Scallion from '..'
+import Millet from '..'
 import { composeMiddleware } from '../compose'
 
-describe('scallion error assert', () => {
+describe('millet error assert', () => {
   test(`composeMiddleware params error`, async () => {
     expect(() => composeMiddleware(1)).toThrow()
   })
@@ -11,9 +11,9 @@ describe('scallion error assert', () => {
       throw new Error('pre next error')
       await next()
     }
-    const scallion = new Scallion(middleware1)
+    const millet = new Millet(middleware1)
 
-    await scallion.do().catch(e => {
+    await millet.do().catch(e => {
       expect(e).toBeDefined()
     })
   })
@@ -23,9 +23,9 @@ describe('scallion error assert', () => {
       await next()
       throw new Error('post next error')
     }
-    const scallion = new Scallion(middleware1)
+    const millet = new Millet(middleware1)
 
-    await scallion.do().catch(e => {
+    await millet.do().catch(e => {
       expect(e).toBeDefined()
     })
   })
@@ -35,9 +35,9 @@ describe('scallion error assert', () => {
       await next()
       await next()
     }
-    const scallion = new Scallion(middleware1)
+    const millet = new Millet(middleware1)
 
-    await scallion.do().catch(e => {
+    await millet.do().catch(e => {
       expect(e).toBeDefined()
     })
   })

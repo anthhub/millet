@@ -1,3 +1,3 @@
-import Scallion from './scallion'
+import Millet from './millet'
 
-export default Scallion
+export default Millet

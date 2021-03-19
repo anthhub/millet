@@ -7,7 +7,7 @@ import json from 'rollup-plugin-json'
 
 const pkg = require('./package.json')
 
-const libraryName = 'scallion'
+const libraryName = 'millet'
 
 export default {
   input: `src/${'index'}.ts`,
@@ -17,15 +17,13 @@ export default {
       name: camelCase(libraryName),
       format: 'umd',
       sourcemap: true,
-      globals: {
-      }
+      globals: {}
     },
     {
       file: pkg.module,
       format: 'es',
       sourcemap: true,
-      globals: {
-      }
+      globals: {}
     }
   ],
   // Indicate here external modules you don't wanna include in your bundle (i.e.: 'lodash')

@@ -38,7 +38,7 @@ export const rescuer = async (ctx: Context, next: Next) => {
       task()
     }
 
-    return holdTask((() => ctx.scallion.do(ctx)) as Next, taskQueue)
+    return holdTask((() => ctx.millet.do(ctx)) as Next, taskQueue)
   }
 
   return ctx

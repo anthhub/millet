@@ -1,10 +1,10 @@
 {
-  "name": "scallion",
-  "version": "0.0.1",
+  "name": "millet",
+  "version": "0.1.0",
   "description": "",
   "keywords": [],
-  "main": "dist/scallion.umd.js",
-  "module": "dist/scallion.es5.js",
+  "main": "dist/millet.umd.js",
+  "module": "dist/millet.es5.js",
   "typings": "dist/types/index.d.ts",
   "files": [
     "dist"
@@ -12,7 +12,7 @@
   "author": "anthhub <anthhub@163.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/anthhub/scallion"
+    "url": "https://github.com/anthhub/millet"
   },
   "license": "MIT",
   "engines": {

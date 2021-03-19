@@ -1,7 +1,7 @@
 import { composeMiddleware } from './compose'
 import { Config, Context, Middleware } from './type'
 
-export default class Scallion<T extends Context> {
+export default class Millet<T extends Context> {
   private middleware: Middleware<T>[] = []
 
   constructor(...middleware: Middleware<T>[]) {
@@ -14,9 +14,9 @@ export default class Scallion<T extends Context> {
   }
 
   async do<U extends Config>(config: U = {} as U): Promise<T & U> {
-    const ctx = ({ ...config, scallion: this, needRescue: false } as unknown) as T & U
+    const ctx = ({ ...config, millet: this, needRescue: false } as unknown) as T & U
     return this.callback(ctx).catch(error => {
-      console.error(`scallion error: `, error)
+      console.error(`millet error: `, error)
       return error
     })
   }

@@ -1,4 +1,4 @@
-import Scallion from './scallion'
+import Millet from './millet'
 
 export type PlainObject = {
   [propName: string]: any
@@ -10,7 +10,7 @@ export type Config = PlainObject & {
 
 export type Context = PlainObject &
   Config & {
-    scallion: Scallion<Context>
+    millet: Millet<Context>
     needRescue: boolean
   }
 
