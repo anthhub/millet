@@ -2,7 +2,7 @@
 
 
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/facebook/react/blob/master/LICENSE)
-[![Build Status](https://travis-ci.com/anthhub/millet.svg?branch=master&status=passed)](https://travis-ci.com/anthhub/millet.svg?branch=main)
+[![Build Status](https://api.travis-ci.com/anthhub/millet.svg?branch=main)](https://api.travis-ci.com/anthhub/millet.svg?branch=main)
 [![Coverage Status](https://coveralls.io/repos/github/anthhub/millet/badge.svg?branch=master)](https://coveralls.io/github/anthhub/millet?branch=master)
 
 
@@ -10,12 +10,47 @@
 
 `Millet` 是一个更通用, 更灵活的中间件框架; 结合 http 请求可实现 `Koa` 功能; 结合其他业务实现更多可能.
 
+
 ## 特性
 
 - 支持 `Koa` 中间件 
 - **支持中间件提前终止**
 - **支持任务重试**
 - 完美的 `TypeScript` 支持
+
+
+## 在线体验
+
+[![Edit](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/bold-benz-odd1g?file=/src/index.js)
+
+### 组装 `Koa`
+```ts
+var http = require('http')
+var Millet = require('millet').default
+
+class App extends Millet {
+  listen(port = 8080) {
+    http
+      .createServer((req, res) => {
+        this.do({ req, res })
+      })
+      .listen(port)
+    console.info(`listening: http://localhost:${port}`)
+  }
+}
+
+const app = new App()
+
+app.use(async (ctx, next) => {
+  await next()
+  const msg = 'url: ' + ctx.req.url
+  ctx.res.write('Hello Millet! ' + msg)
+  ctx.res.end()
+})
+
+app.listen()
+```
+
 ## 安装
 
 ```bash
@@ -63,7 +98,7 @@ millet.use(async (ctx, next) => {
     const data = localStorage.getItem(ctx.req.url)
     if(data){
         ctx.res.data = data
-        // 下游中间件将不会执行
+        // 下游中间件将不会执行, 直接返回上游中间件
         return next.end();
     }
     await next();
@@ -136,4 +171,4 @@ millet.do( {req : { url:'http://liuma.top/api/data', method: 'GET' }, res:{} })
 
 ## 其他
 
-> 更多使用请查看测试用例和源码
+> 更多使用请查看示例, 测试用例和源码
