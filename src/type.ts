@@ -4,14 +4,18 @@ export type PlainObject = {
   [propName: string]: any
 }
 
-export type Config = PlainObject & {
-  rescue?: (ctx: Context) => any
+export type Config = PlainObject
+
+export type Reserved = {
+  suspend: () => void
+  resume: (state?: boolean) => void
+  skipGuard?: boolean
 }
 
 export type Context = PlainObject &
   Config & {
     millet: Millet<Context>
-    needRescue: boolean
+    reserved: Reserved
   }
 
 export interface Next {

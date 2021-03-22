@@ -1,11 +1,10 @@
-import { Context, Middleware, Next } from './type'
+import { Context, Middleware } from './type'
 
 export function composeMiddleware<T extends Context>(middleware: Middleware<T>[]) {
   if (!Array.isArray(middleware)) {
     throw new TypeError('Middleware stack must be an array!')
   }
 
-  // tslint:disable-next-line: only-arrow-functions
   return function(context: T, next: Middleware<T>) {
     // 记录上一次执行中间件的位置 #
     let index = -1
