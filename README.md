@@ -146,14 +146,14 @@ millet.do( {req : { url:'http://liuma.top/api/data', method: 'GET' }, res:{} })
         // 发现 token 过期
         if(code == 401){
             // 挂起后续请求
-            ctx.reserved.suspend?.()
+            ctx.reserved.suspend()
             theToke = await getToken()
             localStorage.setItem('token', theToke)
             // 释放挂起的请求 
             ctx.reserved.resume.()
             // 设置跳过 guard 中间件
             ctx.reserved.skipGuard = true
-            // 重试比往年低失败的请求
+            // 重试之前失败的请求
             const { res: { data } } = await ctx.millet.do({ ...ctx })
             ctx.res.data = data
         }else{
