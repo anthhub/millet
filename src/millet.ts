@@ -1,4 +1,5 @@
 import { composeMiddleware } from './compose'
+import { guard } from './middlewares/guard'
 import { Config, Context, Middleware } from './type'
 
 export default class Millet<T extends Context> {
@@ -14,15 +15,24 @@ export default class Millet<T extends Context> {
   }
 
   async do<U extends Config>(config: U = {} as U): Promise<T & U> {
-    const ctx = ({ ...config, millet: this, needRescue: false } as unknown) as T & U
-    return this.callback(ctx).catch(error => {
+    return this.handle(config, [guard, ...this.middleware])
+  }
+
+  private createContext<U extends Config>(config: U) {
+    return { ...config, millet: this, reserved: { ...config.reserved } }
+  }
+
+  private handle<U extends Config>(config: U, middleware: Middleware<T>[]): Promise<T & U> {
+    const ctx = (this.createContext(config) as unknown) as T & U
+
+    return this.callback(ctx, middleware).catch(error => {
       console.error(`millet error: `, error)
       return error
     })
   }
 
-  private callback(ctx: T) {
-    const fn = composeMiddleware(this.middleware)
+  private callback(ctx: T, middleware: Middleware<T>[]) {
+    const fn = composeMiddleware(middleware)
     return fn(ctx, null as any)
   }
 }
