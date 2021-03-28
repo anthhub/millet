@@ -86,7 +86,7 @@ describe('millet', () => {
     // 模拟异步获取 token
     async function getToken() {
       await wait(100 * Math.random())
-      console.log('getToken')
+      console.log('getToken', token)
       return token
     }
 
@@ -108,30 +108,34 @@ describe('millet', () => {
       await next()
     }
 
+    let processing = false
+
     const middleware2 = async (ctx: Context, next: Next) => {
       await next()
 
       ctx.data = await request(ctx).catch(async error => {
-        console.error(error, ctx)
         if (error.message === 'Invalid token') {
-          let theToke = ''
           try {
-            if (!localStorage.getItem('token')) {
-              ctx.reserved.suspend?.()
+            if (!processing) {
+              processing = true
+              ctx.reserved.suspend()
 
-              theToke = await getToken()
+              const theToke = await getToken()
               localStorage.setItem('token', theToke)
 
-              ctx.reserved.resume?.()
+              ctx.reserved.resume()
+              processing = false
+              const { data } = await ctx.reserved.retry({ ...ctx })
+              return data
+            } else {
+              const { data } = await ctx.reserved.appendTask(ctx)
+              return data
             }
-
-            ctx.reserved.skipGuard = true
-
-            const { data } = await ctx.millet.do({ ...ctx })
-            return data
           } catch (error) {
             return error
           }
+        } else {
+          return error
         }
       })
     }
