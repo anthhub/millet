@@ -1,6 +1,6 @@
 {
   "name": "millet",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "",
   "keywords": [],
   "main": "dist/millet.umd.js",
@@ -65,8 +65,8 @@
     ],
     "coverageThreshold": {
       "global": {
-        "branches": 90,
-        "functions": 90,
+        "branches": 95,
+        "functions": 95,
         "lines": 95,
         "statements": 95
       }

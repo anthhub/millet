@@ -1,31 +1,71 @@
-var http = require("http");
-var Millet = require("millet").default;
+const http = require('http')
+const Millet = require('millet')
+
+function wait(ms) {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve(ms)
+    }, ms)
+  })
+}
 
 class App extends Millet {
-  listen(port = 8080) {
+  listen(port) {
     http
       .createServer((req, res) => {
-        this.do({ req, res });
+        this.do({ req, res })
       })
-      .listen(port);
-    console.info(`Millet listening: http://localhost:${port}`);
+      .listen(port)
+    console.info(`Millet listening: http://localhost:${port}`)
   }
 }
 
-const app = new App();
+const app = new App()
+
+let count = 0
+let concurrent = 0
+let limit = 200
 
 app.use(async (ctx, next) => {
-  const start = Date.now();
-  await next();
-  const ms = Date.now() - start;
-  console.log(`spend ${ms}ms`);
-});
+  count++
+  concurrent++
+  const start = Date.now()
+
+  console.log('concurrent', concurrent)
+  await next()
+  const ms = Date.now() - start
+  console.log(`spend ${ms}ms`)
+  concurrent--
+})
 
 app.use(async (ctx, next) => {
-  await next();
-  const msg = "url: " + ctx.req.url;
-  ctx.res.write("Hello Millet! " + msg);
-  ctx.res.end();
-});
+  ctx.res.setHeader('Access-Control-Allow-Origin', '*')
+  if (count % 3 === 0) {
+    ctx.res.statusCode = 502
+    ctx.res.end()
+    await next.end()
+    console.error(502)
+    return
+  }
 
-app.listen();
+  if (concurrent > limit) {
+    ctx.res.statusCode = 500
+    ctx.res.end()
+    await next.end()
+    console.error(500)
+    return
+  }
+
+  await next()
+})
+
+app.use(async (ctx, next) => {
+  console.log('application')
+  await next()
+  await wait(1000 * Math.random())
+  const msg = 'url: ' + ctx.req.url
+  ctx.res.write('Hello Millet! ' + msg)
+  ctx.res.end()
+})
+
+app.listen(8080)

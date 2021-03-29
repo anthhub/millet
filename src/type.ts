@@ -7,8 +7,11 @@ export type PlainObject = {
 export type Config = PlainObject
 
 export type Reserved = {
+  retry: (ctx: Context) => Promise<Context>
+  appendTask: (ctx: Context) => Promise<Context>
+  walkTask: (control: (taskQueue: Task[]) => any) => void
   suspend: () => void
-  resume: (state?: boolean) => void
+  resume: (control?: boolean) => void
   skipGuard?: boolean
 }
 
@@ -24,3 +27,9 @@ export interface Next {
 }
 
 export type Middleware<T extends Context> = (ctx: T, next: Next) => Promise<any>
+
+export type Task = {
+  resolve: (data?: any) => void
+  reject: (err?: any) => void
+  ctx: Context
+}
