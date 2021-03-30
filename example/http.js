@@ -26,6 +26,7 @@ let count = 0
 let concurrent = 0
 let limit = 200
 
+// 统计中间件
 app.use(async (ctx, next) => {
   count++
   concurrent++
@@ -38,6 +39,7 @@ app.use(async (ctx, next) => {
   concurrent--
 })
 
+// 流控中间件
 app.use(async (ctx, next) => {
   ctx.res.setHeader('Access-Control-Allow-Origin', '*')
   if (count % 3 === 0) {
@@ -59,6 +61,7 @@ app.use(async (ctx, next) => {
   await next()
 })
 
+// 业务中间件
 app.use(async (ctx, next) => {
   console.log('application')
   await next()

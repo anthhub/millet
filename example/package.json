@@ -5,7 +5,9 @@
   "main": "http.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "hs"
+    "start": "hs -p 8081",
+    "server": "node http.js"
+
   },
   "author": "",
   "license": "ISC",
